@@ -14,20 +14,28 @@ import java.util.Set;
 @Service
 public class ExaminerServiceImpl implements ExaminerService {
     private final Random random = new Random();
-    private final QuestionService questionService;
+    private final QuestionService javaQuestionService;
+    private final QuestionService mathQuestionService;
 
-    public ExaminerServiceImpl(QuestionService questionService) {
-        this.questionService = questionService;
+    public ExaminerServiceImpl(@Qualifier("javaQuestionService") QuestionService javaQuestionService,
+                               @Qualifier("mathQuestionService") QuestionService mathQuestionService) {
+        this.javaQuestionService = javaQuestionService;
+        this.mathQuestionService = mathQuestionService;
     }
 
     @Override
     public Collection<Question> getQuestions(int amount) {
-        if (questionService.getAll().size() < amount) {
+        if (javaQuestionService.getAll().size()+mathQuestionService.getAll().size() < amount) {
             throw new NotEnoughQuestionException();
         }
+        int javaAmount = random.nextInt(amount);
+        int mathAmount = amount-javaAmount;
         Set<Question> userQuestionSet = new HashSet<>();
-        while (userQuestionSet.size() < amount) {
-            userQuestionSet.add(questionService.getRandomQuestion());
+        while (userQuestionSet.size() < javaAmount) {
+            userQuestionSet.add(javaQuestionService.getRandomQuestion());
+        }
+        while (userQuestionSet.size() < mathAmount) {
+            userQuestionSet.add(javaQuestionService.getRandomQuestion());
         }
         return userQuestionSet;
     }

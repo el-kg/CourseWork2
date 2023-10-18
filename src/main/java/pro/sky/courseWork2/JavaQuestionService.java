@@ -2,12 +2,15 @@ package pro.sky.courseWork2;
 
 import org.springframework.stereotype.Service;
 import pro.sky.courseWork2.exception.NotEnoughQuestionException;
+import pro.sky.courseWork2.repository.JavaQuestionRepository;
 
 import java.util.*;
 
+import static org.apache.logging.log4j.ThreadContext.isEmpty;
+
 @Service
 public class JavaQuestionService implements QuestionService {
-    private final Set<Question> questions = new HashSet<>();
+    private final JavaQuestionRepository javaQuestions = new JavaQuestionRepository();
     private final Random rnd = new Random();
 
     @Override
@@ -18,28 +21,28 @@ public class JavaQuestionService implements QuestionService {
 
     @Override
     public Question add(Question question) {
-        questions.add(question);
+        javaQuestions.add(question);
         return question;
     }
 
     @Override
     public Question remove(Question question) {
-        questions.remove(question);
+        javaQuestions.remove(question);
         return question;
     }
 
     @Override
     public Collection<Question> getAll() {
-        return Collections.unmodifiableSet(questions);
+        return javaQuestions.getAll();
     }
 
     @Override
     public Question getRandomQuestion() {
-        if (questions.isEmpty()) {
+        if (javaQuestions.getAll().isEmpty()) {
             throw new NotEnoughQuestionException();
         }
-        int random = rnd.nextInt(questions.size());
-        return (Question) questions.toArray()[random];
+        int random = rnd.nextInt(javaQuestions.getAll().size());
+        return (Question) javaQuestions.getAll().toArray()[random];
 
     }
 }
