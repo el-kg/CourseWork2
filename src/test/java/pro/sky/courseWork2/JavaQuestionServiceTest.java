@@ -22,6 +22,7 @@ class JavaQuestionServiceTest {
 
     @Test
     void remove_shouldRemoveQuestionFromSetAndReturnQuestion() {
+        underTest.add(question);
         Question result = underTest.remove(question);
         assertFalse(underTest.getAll().contains(question));
         assertEquals(question, result);
